@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SWAP — Trade Skills With Students</title>
+  <meta name="description" content="Teach one skill, learn another. The neo-brutalist student skill exchange."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --yellow:#FFD93D;--red:#FF6B6B;--green:#6BCB77;--blue:#4D96FF;
+      --purple:#C780FA;--black:#000;--cream:#FFF8E7;--white:#fff;
+      --orange:#FF9F43;--teal:#00B4D8;--pink:#FF6B9D;
+    }
+    body{min-height:100vh;background:var(--cream);color:var(--black);
+      -webkit-font-smoothing:antialiased;font-family:'Space Grotesk',sans-serif;}
+    .page{display:none;min-height:100vh}.page.active{display:block}
+    .font-display{font-family:'Space Mono',monospace;font-weight:700}
+    .nb-btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+      border:2px solid var(--black);box-shadow:4px 4px 0 0 var(--black);
+      font-family:'Space Mono',monospace;font-weight:700;text-transform:uppercase;
+      transition:transform .1s,box-shadow .1s}
+    .nb-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 var(--black)}
+    .nb-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--black)}
+
+    /* ═══ LANDING ═══ */
+    .land-nav{display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 1.5rem;border-bottom:3px solid var(--black);background:var(--yellow)}
+    .nav-brand{display:flex;align-items:center;gap:.5rem}
+    .nav-logo{background:var(--black);color:var(--yellow);font-family:'Space Mono',monospace;
+      font-weight:700;font-size:1.5rem;padding:.25rem .75rem;border:2px solid var(--black)}
+    .nav-tagline{font-weight:600;font-size:.95rem}
+    @media(max-width:767px){.nav-tagline{display:none}}
+    .nav-actions{display:flex;gap:.5rem}
+    .btn-nav-l{background:var(--white);padding:.65rem 1.25rem;color:var(--black);font-size:.85rem}
+    .btn-nav-s{background:var(--black);padding:.65rem 1.25rem;color:var(--yellow);font-size:.85rem;gap:.35rem}
+    .hero{padding:3rem 1.5rem 5rem;display:grid;gap:2.5rem;align-items:center;max-width:1280px;margin:0 auto}
+    @media(min-width:768px){.hero{grid-template-columns:1fr 1fr;padding:5rem 3rem}}
+    .hero-badge{display:inline-block;background:var(--green);border:2px solid var(--black);
+      box-shadow:2px 2px 0 0 var(--black);font-size:.8rem;font-weight:600;padding:.3rem .75rem;
+      margin-bottom:1rem;animation:fadeInUp .5s ease .1s both}
+    .hero-title{font-family:'Space Mono',monospace;font-weight:700;
+      font-size:clamp(2.8rem,7vw,4.5rem);line-height:.95;margin-bottom:1.5rem;
+      animation:fadeInUpLg .6s ease .2s both}
+    .hero-title-hl{background:var(--red);padding:0 .5rem;display:inline-block;
+      border:2px solid var(--black);box-shadow:6px 6px 0 0 var(--black)}
+    .hero-desc{font-size:1.1rem;max-width:32rem;margin-bottom:2rem;font-weight:500;line-height:1.6}
+    .hero-cta{display:flex;flex-wrap:wrap;gap:1rem}
+    .btn-start{background:var(--red);padding:.75rem 1.25rem;color:var(--black);gap:.4rem}
+    .btn-acct{background:var(--white);padding:.75rem 1.25rem;color:var(--black)}
+    .hero-stats{display:flex;gap:1.5rem;margin-top:2.5rem}
+    .stat-num{font-family:'Space Mono',monospace;font-weight:700;font-size:1.875rem}
+    .stat-lbl{font-size:.75rem;text-transform:uppercase;font-weight:600;opacity:.7}
+    .hero-img-wrap{position:relative;animation:fadeInScale .7s ease .3s both}
+    .hero-img-card{border:2px solid var(--black);box-shadow:4px 4px 0 0 var(--black);
+      padding:.5rem;background:var(--blue);transform:rotate(-2deg)}
+    .hero-img-card img{width:100%;height:380px;object-fit:cover;border:2px solid var(--black);display:block}
+    @media(min-width:768px){.hero-img-card img{height:460px}}
+    .float-card{display:none;position:absolute;border:2px solid var(--black);
+      box-shadow:4px 4px 0 0 var(--black);padding:1rem}
+    @media(min-width:768px){.float-card{display:block}}
+    .float-match{bottom:-1.5rem;left:-1.5rem;background:var(--purple);width:14rem}
+    .float-xp{top:-1.5rem;right:-1.5rem;background:var(--green);width:11rem;padding:.75rem}
+    .fc-lbl{font-size:.7rem;text-transform:uppercase;font-weight:700;opacity:.7}
+    .fc-val{font-family:'Space Mono',monospace;font-weight:700;font-size:1.5rem}
+    .fc-sub{font-size:.85rem;font-weight:600}
+    .fc-val-sm{font-family:'Space Mono',monospace;font-weight:700;font-size:1.125rem}
+    .fc-sub-sm{font-size:.75rem;font-weight:600}
+    .how-section{padding:4rem 1.5rem;max-width:1280px;margin:0 auto}
+    @media(min-width:768px){.how-section{padding:4rem 3rem}}
+    .how-title{font-family:'Space Mono',monospace;font-weight:700;font-size:clamp(2rem,5vw,3rem);margin-bottom:2.5rem}
+    .how-grid{display:grid;grid-template-columns:1fr;gap:1.5rem}
+    @media(min-width:768px){.how-grid{grid-template-columns:repeat(3,1fr)}}
+    .how-card{border:2px solid var(--black);box-shadow:4px 4px 0 0 var(--black);padding:1.5rem}
+    .how-card-num{font-family:'Space Mono',monospace;font-weight:700;font-size:3rem;margin-bottom:.5rem}
+    .how-card-title{font-family:'Space Mono',monospace;font-weight:700;font-size:1.5rem;margin-bottom:.5rem}
+    .how-card-desc{font-weight:500;line-height:1.5}
+    .land-footer{border-top:3px solid var(--black);background:var(--black);color:var(--yellow);
+      padding:1.5rem;text-align:center;font-family:'Space Mono',monospace;font-weight:700;
+      font-size:.9rem;letter-spacing:.05em}
+
+    /* ═══ AUTH ═══ */
+    .auth-page{min-height:100vh;background:var(--cream);display:flex;flex-direction:column}
+    .auth-topbar{padding:.75rem 1.25rem;border-bottom:2px solid var(--black)}
+    .btn-back{background:var(--white);border:2px solid var(--black);box-shadow:3px 3px 0 0 var(--black);
+      font-family:'Space Mono',monospace;font-weight:700;font-size:.8rem;padding:.4rem .9rem;
+      cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;
+      transition:transform .1s,box-shadow .1s}
+    .btn-back:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 0 var(--black)}
+    .btn-back:active{transform:translate(1px,1px);box-shadow:1px 1px 0 0 var(--black)}
+    .auth-body{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 1rem 4rem}
+    .auth-card{background:var(--yellow);border:2px solid var(--black);box-shadow:6px 6px 0 0 var(--black);
+      padding:2rem 2rem 2.5rem;width:100%;max-width:420px;animation:slideUp .45s ease both}
+    .auth-logo{display:inline-block;background:var(--black);color:var(--yellow);
+      font-family:'Space Mono',monospace;font-weight:700;font-size:1rem;padding:.2rem .6rem;
+      border:2px solid var(--black);margin-bottom:1rem}
+    .auth-heading{font-family:'Space Mono',monospace;font-weight:700;font-size:1.9rem;
+      line-height:1;margin-bottom:.45rem}
+    .auth-sub{font-size:.9rem;font-weight:500;margin-bottom:1.6rem;opacity:.85}
+    .field{margin-bottom:1.1rem}
+    .field label{display:block;font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;
+      text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem}
+    .field input,.field select,.field textarea{width:100%;padding:.65rem .85rem;border:2px solid var(--black);
+      background:var(--white);font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:500;
+      outline:none;transition:box-shadow .15s;color:var(--black)}
+    .field input::placeholder,.field textarea::placeholder{color:#888}
+    .field input:focus,.field select:focus,.field textarea:focus{box-shadow:3px 3px 0 0 var(--black)}
+    .field textarea{resize:vertical;min-height:60px}
+    .pw-wrap{position:relative}
+    .pw-toggle{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);
+      background:none;border:none;cursor:pointer;padding:0;color:#555;display:flex;align-items:center}
+    .pw-toggle:hover{color:var(--black)}
+    .field-error{display:none;font-size:.78rem;font-weight:600;color:#c0392b;margin-top:.3rem}
+    .field.has-error input{border-color:#c0392b;box-shadow:3px 3px 0 0 #c0392b}
+    .field.has-error .field-error{display:block}
+    .auth-divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;
+      font-size:.78rem;font-weight:600;text-transform:uppercase;opacity:.6}
+    .auth-divider::before,.auth-divider::after{content:'';flex:1;border-top:2px solid var(--black);opacity:.3}
+    .btn-submit{width:100%;background:var(--black);color:var(--yellow);border:2px solid var(--black);
+      box-shadow:4px 4px 0 0 #333;font-family:'Space Mono',monospace;font-weight:700;font-size:.9rem;
+      text-transform:uppercase;padding:.85rem 1rem;cursor:pointer;display:flex;align-items:center;
+      justify-content:center;gap:.4rem;transition:transform .1s,box-shadow .1s;
+      letter-spacing:.04em;margin-top:1.4rem}
+    .btn-submit:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 #333}
+    .btn-submit:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 #333}
+    .btn-google{width:100%;background:var(--white);color:var(--black);border:2px solid var(--black);
+      box-shadow:4px 4px 0 0 var(--black);font-family:'Space Mono',monospace;font-weight:700;
+      font-size:.85rem;text-transform:uppercase;padding:.75rem 1rem;cursor:pointer;display:flex;
+      align-items:center;justify-content:center;gap:.55rem;transition:transform .1s,box-shadow .1s}
+    .btn-google:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 var(--black)}
+    .btn-google:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--black)}
+    .auth-switch{text-align:center;font-size:.87rem;font-weight:500;margin-top:1.1rem}
+    .auth-switch a{font-family:'Space Mono',monospace;font-weight:700;color:var(--black);
+      text-decoration:underline;cursor:pointer}
+    .auth-switch a:hover{opacity:.7}
+    .forgot-link{display:block;text-align:right;font-size:.78rem;font-weight:600;
+      color:var(--black);text-decoration:underline;cursor:pointer;margin-top:.25rem}
+    .forgot-link:hover{opacity:.7}
+    .strength-wrap{margin-top:.4rem}
+    .strength-bar{height:5px;border:1.5px solid var(--black);background:#ddd;overflow:hidden}
+    .strength-fill{height:100%;width:0;transition:width .3s,background .3s}
+    .strength-lbl{font-size:.72rem;font-weight:700;margin-top:.25rem;color:#555}
+
+    /* ═══ ONBOARDING ═══ */
+    .ob-page{min-height:100vh;background:var(--cream);display:flex;flex-direction:column}
+    .ob-topbar{display:flex;align-items:center;justify-content:space-between;
+      padding:.75rem 1.25rem;border-bottom:2px solid var(--black)}
+    .ob-logo{background:var(--black);color:var(--yellow);font-family:'Space Mono',monospace;
+      font-weight:700;font-size:1.1rem;padding:.2rem .65rem;border:2px solid var(--black)}
+    .ob-progress{display:flex;gap:4px}
+    .ob-dot{width:28px;height:8px;border:1.5px solid var(--black)}
+    .ob-body{flex:1;display:flex;justify-content:center;padding:2rem 1rem 3rem}
+    .ob-card{background:var(--white);border:2px solid var(--black);box-shadow:6px 6px 0 0 var(--black);
+      padding:2rem;width:100%;max-width:520px;animation:slideUp .4s ease both}
+    .ob-title{font-family:'Space Mono',monospace;font-weight:700;font-size:1.6rem;margin-bottom:1.2rem}
+    .ob-subtitle{font-family:'Space Mono',monospace;font-weight:700;font-size:.85rem;
+      text-transform:uppercase;margin-bottom:.6rem}
+    .ob-footer{display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;
+      border-top:2px solid #eee}
+    .btn-ob{border:2px solid var(--black);font-family:'Space Mono',monospace;font-weight:700;
+      font-size:.85rem;padding:.6rem 1.5rem;cursor:pointer;transition:transform .1s,box-shadow .1s}
+    .btn-ob:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 0 var(--black)}
+    .btn-ob-back{background:var(--white);box-shadow:3px 3px 0 0 var(--black)}
+    .btn-ob-next{background:var(--black);color:var(--yellow);box-shadow:3px 3px 0 0 #333;display:flex;align-items:center;gap:.4rem}
+
+    /* skill tags */
+    .skill-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.6rem;min-height:30px}
+    .skill-tag{display:inline-flex;align-items:center;gap:.3rem;font-family:'Space Mono',monospace;
+      font-weight:700;font-size:.78rem;padding:.3rem .6rem;border:2px solid var(--black)}
+    .skill-tag-teach{background:var(--green)}
+    .skill-tag-learn{background:var(--red);color:var(--white)}
+    .skill-tag .tag-x{cursor:pointer;font-size:.9rem;line-height:1;margin-left:.15rem}
+    .skill-tag .tag-x:hover{opacity:.6}
+    .skill-input-row{display:flex;gap:.4rem;margin-bottom:.6rem}
+    .skill-input-row input{flex:1;padding:.5rem .7rem;border:2px solid var(--black);
+      font-family:'Space Grotesk',sans-serif;font-size:.9rem;outline:none}
+    .skill-input-row input:focus{box-shadow:3px 3px 0 0 var(--black)}
+    .skill-add-btn{background:var(--black);color:var(--white);border:2px solid var(--black);
+      width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+      font-size:1.3rem;cursor:pointer;transition:transform .1s}
+    .skill-add-btn:hover{transform:scale(1.05)}
+    .skill-suggestions{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.5rem}
+    .skill-sug{font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;
+      padding:.25rem .5rem;border:2px solid var(--black);background:var(--white);
+      cursor:pointer;transition:transform .1s}
+    .skill-sug:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 0 var(--black)}
+    .skill-more{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;
+      font-weight:700;font-size:.72rem;padding:.25rem .5rem;border:2px solid var(--black);cursor:pointer}
+
+    /* ═══ DASHBOARD NAV ═══ */
+    .dash-nav{display:flex;align-items:center;justify-content:space-between;
+      padding:.6rem 1rem;border-bottom:3px solid var(--black);background:var(--black);flex-wrap:wrap;gap:.5rem}
+    .dash-nav-left{display:flex;align-items:center;gap:.5rem}
+    .dash-logo{background:var(--blue);color:var(--white);font-family:'Space Mono',monospace;
+      font-weight:700;font-size:1.1rem;padding:.25rem .65rem;border:2px solid var(--white)}
+    .dash-tab{font-family:'Space Mono',monospace;font-weight:700;font-size:.78rem;
+      text-transform:uppercase;padding:.45rem .85rem;border:2px solid var(--white);
+      background:transparent;color:var(--white);cursor:pointer;display:flex;align-items:center;gap:.3rem;
+      transition:background .15s,color .15s}
+    .dash-tab:hover{background:rgba(255,255,255,.15)}
+    .dash-tab.active{background:var(--white);color:var(--black)}
+    .dash-nav-right{display:flex;align-items:center;gap:.5rem}
+    .dash-xp{font-family:'Space Mono',monospace;font-weight:700;font-size:.8rem;color:var(--yellow);
+      border:2px solid var(--yellow);padding:.3rem .65rem;display:flex;align-items:center;gap:.3rem}
+    .dash-avatar{width:34px;height:34px;border-radius:50%;border:2px solid var(--white);
+      display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;
+      font-weight:700;font-size:.85rem;color:var(--black);cursor:pointer}
+    .dash-logout{background:none;border:none;color:var(--white);cursor:pointer;padding:4px;
+      display:flex;align-items:center;opacity:.7;transition:opacity .15s}
+    .dash-logout:hover{opacity:1}
+
+    /* ═══ DISCOVER ═══ */
+    .dash-content{max-width:1280px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    @media(min-width:768px){.dash-content{padding:2rem 3rem 4rem}}
+    .dash-title{font-family:'Space Mono',monospace;font-weight:700;font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:.3rem}
+    .dash-subtitle{font-size:.95rem;font-weight:500;opacity:.7;margin-bottom:1.5rem}
+    .search-row{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .search-box{flex:1;min-width:200px;position:relative}
+    .search-box input{width:100%;padding:.65rem .85rem .65rem 2.4rem;border:2px solid var(--black);
+      font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:500;outline:none;background:var(--white)}
+    .search-box input:focus{box-shadow:3px 3px 0 0 var(--black)}
+    .search-box svg{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);opacity:.4}
+    .filter-box select{padding:.65rem .85rem;border:2px solid var(--black);font-family:'Space Grotesk',sans-serif;
+      font-size:.95rem;font-weight:500;outline:none;background:var(--white);min-width:180px;cursor:pointer}
+    .filter-box select:focus{box-shadow:3px 3px 0 0 var(--black)}
+
+    .match-grid{display:grid;grid-template-columns:1fr;gap:1.25rem}
+    @media(min-width:768px){.match-grid{grid-template-columns:repeat(3,1fr)}}
+    .match-card{border:3px solid var(--black);box-shadow:5px 5px 0 0 var(--black);padding:1.25rem;
+      display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+    .match-card:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 0 var(--black)}
+    .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem}
+    .mc-user{display:flex;align-items:center;gap:.7rem}
+    .mc-avatar{width:44px;height:44px;border-radius:50%;border:2px solid var(--black);
+      display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .mc-name{font-family:'Space Mono',monospace;font-weight:700;font-size:1rem}
+    .mc-handle{font-size:.8rem;font-weight:600;opacity:.6}
+    .mc-badge{font-family:'Space Mono',monospace;font-weight:700;font-size:.95rem;
+      padding:.2rem .55rem;text-align:center;border:2px solid var(--black);line-height:1.1}
+    .mc-badge small{display:block;font-size:.55rem;letter-spacing:.05em}
+    .mc-meta{display:flex;flex-wrap:wrap;gap:.6rem;font-size:.78rem;font-weight:600;
+      margin-bottom:.6rem;opacity:.7}
+    .mc-meta span{display:flex;align-items:center;gap:.2rem}
+    .mc-label{font-family:'Space Mono',monospace;font-weight:700;font-size:.68rem;
+      text-transform:uppercase;opacity:.6;margin-bottom:.3rem}
+    .mc-skill-tag{display:inline-block;font-family:'Space Mono',monospace;font-weight:700;
+      font-size:.75rem;padding:.2rem .5rem;border:2px solid var(--black);background:var(--black);
+      color:var(--white);margin-bottom:.5rem}
+    .mc-bio{font-size:.85rem;font-weight:500;margin-bottom:1rem;flex:1;line-height:1.4}
+    .btn-swap{width:100%;background:var(--black);color:var(--white);border:2px solid var(--black);
+      box-shadow:3px 3px 0 0 #333;font-family:'Space Mono',monospace;font-weight:700;font-size:.78rem;
+      text-transform:uppercase;padding:.7rem;cursor:pointer;display:flex;align-items:center;
+      justify-content:center;gap:.4rem;transition:transform .1s,box-shadow .1s}
+    .btn-swap:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 0 #333}
+    .btn-swap:active{transform:translate(1px,1px);box-shadow:1px 1px 0 0 #333}
+    .btn-swap.sent{background:var(--green);color:var(--black);cursor:default}
+    .btn-swap.sent:hover{transform:none;box-shadow:3px 3px 0 0 #333}
+
+    /* ═══ REQUESTS ═══ */
+    .req-grid{display:grid;grid-template-columns:1fr;gap:1.25rem}
+    @media(min-width:768px){.req-grid{grid-template-columns:1fr 1fr}}
+    .req-col{border:2px solid var(--black);padding:1.25rem;background:var(--white);min-height:200px}
+    .req-col-title{font-family:'Space Mono',monospace;font-weight:700;font-size:1rem;margin-bottom:1rem}
+    .req-empty{font-size:.9rem;font-weight:500;opacity:.5;font-style:italic}
+    .req-item{border:2px solid var(--black);padding:.85rem 1rem;margin-bottom:.65rem;
+      display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .req-item-info{flex:1}
+    .req-item-user{font-family:'Space Mono',monospace;font-weight:700;font-size:.9rem}
+    .req-item-detail{font-size:.8rem;font-weight:500;opacity:.7;margin-top:.15rem}
+    .req-status{font-family:'Space Mono',monospace;font-weight:700;font-size:.7rem;
+      text-transform:uppercase;padding:.25rem .5rem;border:2px solid var(--black)}
+    .req-status.pending{background:var(--yellow)}
+    .req-status.accepted{background:var(--green)}
+    .req-status.declined{background:var(--red);color:var(--white)}
+    .req-actions{display:flex;gap:.4rem}
+    .req-act-btn{font-family:'Space Mono',monospace;font-weight:700;font-size:.7rem;
+      padding:.3rem .6rem;border:2px solid var(--black);cursor:pointer;transition:transform .1s}
+    .req-act-btn:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 0 var(--black)}
+    .req-accept{background:var(--green)}
+    .req-decline{background:var(--red);color:var(--white)}
+
+    /* ═══ PROFILE ═══ */
+    .profile-card{background:var(--yellow);border:2px solid var(--black);box-shadow:6px 6px 0 0 var(--black);
+      padding:1.5rem 2rem;max-width:640px}
+    .pc-top{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1rem;flex-wrap:wrap}
+    .pc-avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--black);
+      display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+    .pc-info{flex:1}
+    .pc-name{font-family:'Space Mono',monospace;font-weight:700;font-size:1.3rem}
+    .pc-handle{font-size:.85rem;font-weight:600;opacity:.6}
+    .pc-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+    .pc-badge{font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;
+      padding:.25rem .55rem;border:2px solid var(--black);display:flex;align-items:center;gap:.25rem}
+    .pc-badge-xp{background:var(--white)}
+    .pc-badge-lvl{background:var(--white)}
+    .pc-badge-rank{background:var(--green)}
+    .btn-edit{background:var(--black);color:var(--yellow);font-family:'Space Mono',monospace;
+      font-weight:700;font-size:.8rem;padding:.5rem 1rem;border:2px solid var(--black);
+      cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:3px 3px 0 0 #333}
+    .btn-edit:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 0 #333}
+    .pc-bio{font-size:.95rem;font-weight:600;margin-bottom:1rem}
+    .pc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem 1.5rem;margin-bottom:1.25rem}
+    @media(min-width:480px){.pc-stats{grid-template-columns:repeat(4,1fr)}}
+    .pc-stat-lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:.65rem;
+      text-transform:uppercase;opacity:.6}
+    .pc-stat-val{font-family:'Space Mono',monospace;font-weight:700;font-size:.95rem}
+    .pc-section-lbl{font-family:'Space Mono',monospace;font-weight:700;font-size:.78rem;
+      text-transform:uppercase;margin-bottom:.4rem;margin-top:.5rem}
+    .pc-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+
+    /* edit mode */
+    .edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;
+      display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+    .edit-overlay.show{opacity:1;pointer-events:all}
+    .edit-box{background:var(--yellow);border:3px solid var(--black);box-shadow:8px 8px 0 0 var(--black);
+      padding:2rem;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;animation:slideUp .35s ease both}
+    .edit-title{font-family:'Space Mono',monospace;font-weight:700;font-size:1.3rem;margin-bottom:1.2rem}
+    .edit-actions{display:flex;gap:.5rem;margin-top:1.2rem}
+
+    /* ═══ TOAST + SUCCESS ═══ */
+    #toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);
+      background:var(--black);color:var(--yellow);font-family:'Space Mono',monospace;font-weight:700;
+      font-size:.85rem;padding:.7rem 1.4rem;border:2px solid var(--black);box-shadow:4px 4px 0 0 #333;
+      opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;z-index:9999}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;
+      align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s}
+    .success-overlay.show{opacity:1;pointer-events:all}
+    .success-box{background:var(--green);border:3px solid var(--black);box-shadow:8px 8px 0 0 var(--black);
+      padding:2.5rem 2rem;text-align:center;max-width:340px;width:90%;animation:slideUp .4s ease both}
+    .success-box h2{font-family:'Space Mono',monospace;font-size:1.8rem;margin-bottom:.5rem}
+    .success-box p{font-weight:500;margin-bottom:1.5rem}
+    .btn-success{background:var(--black);color:var(--yellow);border:2px solid var(--black);
+      box-shadow:4px 4px 0 0 #333;font-family:'Space Mono',monospace;font-weight:700;
+      padding:.7rem 1.5rem;cursor:pointer;font-size:.9rem;transition:transform .1s,box-shadow .1s}
+    .btn-success:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 #333}
+
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeInUpLg{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeInScale{from{opacity:0;transform:scale(.9) rotate(-2deg)}to{opacity:1;transform:scale(1) rotate(-2deg)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ PAGE: LANDING ════════════════ -->
+<div id="page-home" class="page active">
+  <nav class="land-nav">
+    <div class="nav-brand">
+      <div class="nav-logo">SWAP</div>
+      <span class="nav-tagline">trade skills, level up</span>
+    </div>
+    <div class="nav-actions">
+      <button class="nb-btn btn-nav-l" onclick="showPage('login')">Log In</button>
+      <button class="nb-btn btn-nav-s" onclick="showPage('signup')">Sign Up <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+    </div>
+  </nav>
+  <section class="hero">
+    <div>
+      <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> A new way to learn</div>
+      <h1 class="hero-title">TEACH ONE.<br/><span class="hero-title-hl">LEARN ONE.</span></h1>
+      <p class="hero-desc">SWAP matches you with students who teach what you want to learn — and want to learn what you can teach. No money. Pure exchange.</p>
+      <div class="hero-cta">
+        <button class="nb-btn btn-start" onclick="showPage('signup')">Start Swapping <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+        <button class="nb-btn btn-acct" onclick="showPage('login')">I have an account</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">1:1</div><div class="stat-lbl">Skill swaps</div></div>
+        <div><div class="stat-num">%</div><div class="stat-lbl">Match score</div></div>
+        <div><div class="stat-num">XP</div><div class="stat-lbl">Level up</div></div>
+      </div>
+    </div>
+    <div class="hero-img-wrap">
+      <div class="hero-img-card"><img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzV8MHwxfHNlYXJjaHwzfHxzdHVkZW50cyUyMGNvbGxhYm9yYXRpbmd8ZW58MHx8fHwxNzgyODEzOTk4fDA&ixlib=rb-4.1.0&q=85" alt="students collaborating"/></div>
+      <div class="float-card float-match"><div class="fc-lbl">Match found</div><div class="fc-val">94%</div><div class="fc-sub">Python ↔ Spanish</div></div>
+      <div class="float-card float-xp"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin-bottom:4px"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg><div class="fc-val-sm">+50 XP</div><div class="fc-sub-sm">Profile created!</div></div>
+    </div>
+  </section>
+  <section class="how-section">
+    <h2 class="how-title">HOW IT WORKS</h2>
+    <div class="how-grid">
+      <div class="how-card" style="background:var(--yellow)"><div class="how-card-num">01</div><div class="how-card-title">List your skills</div><p class="how-card-desc">Pick what you can teach and what you want to learn.</p></div>
+      <div class="how-card" style="background:var(--red)"><div class="how-card-num">02</div><div class="how-card-title">Get matched</div><p class="how-card-desc">We rank students by compatibility, college and skills.</p></div>
+      <div class="how-card" style="background:var(--green)"><div class="how-card-num">03</div><div class="how-card-title">Swap &amp; level up</div><p class="how-card-desc">Send a swap, schedule sessions, earn XP and badges.</p></div>
+    </div>
+  </section>
+  <footer class="land-footer">BUILT FOR STUDENTS · MADE WITH SWAP</footer>
+</div>
+
+<!-- ════════════════ PAGE: SIGNUP ════════════════ -->
+<div id="page-signup" class="page">
+  <div class="auth-page">
+    <div class="auth-topbar"><button class="btn-back" onclick="showPage('home')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg> Back</button></div>
+    <div class="auth-body">
+      <div class="auth-card">
+        <div class="auth-logo">SWAP</div>
+        <h1 class="auth-heading">CREATE ACCOUNT</h1>
+        <p class="auth-sub">Pick a username and password. Profile next.</p>
+        <button class="btn-google" onclick="showToast('Google sign-up coming soon!')"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button>
+        <div class="auth-divider">or</div>
+        <form id="signup-form" novalidate onsubmit="handleSignup(event)">
+          <div class="field" id="field-username"><label for="su-username">Username</label><input id="su-username" type="text" placeholder="e.g. taylor" autocomplete="username"/><span class="field-error">Username must be at least 3 characters.</span></div>
+          <div class="field" id="field-displayname"><label for="su-displayname">Display Name</label><input id="su-displayname" type="text" placeholder="Your name (optional)" autocomplete="name"/></div>
+          <div class="field" id="field-password"><label for="su-password">Password</label><div class="pw-wrap"><input id="su-password" type="password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateStrength(this.value)"/><button type="button" class="pw-toggle" onclick="togglePw('su-password',this)"><svg id="eye-su-password" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="strength-wrap"><div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div><div class="strength-lbl" id="strength-lbl"></div></div><span class="field-error">Password must be at least 6 characters.</span></div>
+          <div class="field" id="field-confirm"><label for="su-confirm">Confirm Password</label><div class="pw-wrap"><input id="su-confirm" type="password" placeholder="Repeat password" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw('su-confirm',this)"><svg id="eye-su-confirm" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><span class="field-error">Passwords do not match.</span></div>
+          <button type="submit" class="btn-submit">Create Account <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+        </form>
+        <p class="auth-switch">Already have an account? <a onclick="showPage('login')">Log in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: LOGIN ════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-topbar"><button class="btn-back" onclick="showPage('home')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg> Back</button></div>
+    <div class="auth-body">
+      <div class="auth-card">
+        <div class="auth-logo">SWAP</div>
+        <h1 class="auth-heading">WELCOME BACK</h1>
+        <p class="auth-sub">Log in and keep swapping skills.</p>
+        <button class="btn-google" onclick="showToast('Google login coming soon!')"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button>
+        <div class="auth-divider">or</div>
+        <form id="login-form" novalidate onsubmit="handleLogin(event)">
+          <div class="field" id="field-li-user"><label for="li-username">Username or Email</label><input id="li-username" type="text" placeholder="e.g. taylor" autocomplete="username"/><span class="field-error">Please enter your username or email.</span></div>
+          <div class="field" id="field-li-pw"><label for="li-password">Password</label><div class="pw-wrap"><input id="li-password" type="password" placeholder="Your password" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw('li-password',this)"><svg id="eye-li-password" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><a class="forgot-link" onclick="showToast('Password reset link sent! (demo)')">Forgot password?</a><span class="field-error">Please enter your password.</span></div>
+          <button type="submit" class="btn-submit">Log In <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></button>
+        </form>
+        <p class="auth-switch">New here? <a onclick="showPage('signup')">Create an account</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: ONBOARDING ════════════════ -->
+<div id="page-onboarding" class="page">
+  <div class="ob-page">
+    <div class="ob-topbar">
+      <div class="ob-logo">SWAP</div>
+      <div class="ob-progress" id="ob-progress"></div>
+    </div>
+    <div class="ob-body">
+      <div class="ob-card" id="ob-card"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: DISCOVER ════════════════ -->
+<div id="page-discover" class="page">
+  <nav class="dash-nav">
+    <div class="dash-nav-left">
+      <div class="dash-logo">SWAP</div>
+      <button class="dash-tab active" onclick="showDash('discover')">✦ DISCOVER</button>
+      <button class="dash-tab" onclick="showDash('requests')">📨 REQUESTS</button>
+      <button class="dash-tab" onclick="showDash('profile')">◈ PROFILE</button>
+    </div>
+    <div class="dash-nav-right">
+      <span class="dash-xp" id="dash-xp">✧ 50 XP</span>
+      <div class="dash-avatar" id="dash-avatar" style="background:var(--teal)" onclick="showDash('profile')"></div>
+      <button class="dash-logout" onclick="doLogout()" title="Log out"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </nav>
+  <div class="dash-content">
+    <h1 class="dash-title">YOUR MATCHES</h1>
+    <p class="dash-subtitle">Ranked by skill compatibility, college, and location.</p>
+    <div class="search-row">
+      <div class="search-box"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by name, skill or username" oninput="filterMatches()"/></div>
+      <div class="filter-box"><select onchange="filterMatches()"><option value="">Filter by college</option></select></div>
+    </div>
+    <div class="match-grid" id="match-grid"></div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: REQUESTS ════════════════ -->
+<div id="page-requests" class="page">
+  <nav class="dash-nav">
+    <div class="dash-nav-left">
+      <div class="dash-logo">SWAP</div>
+      <button class="dash-tab" onclick="showDash('discover')">✦ DISCOVER</button>
+      <button class="dash-tab active" onclick="showDash('requests')">📨 REQUESTS</button>
+      <button class="dash-tab" onclick="showDash('profile')">◈ PROFILE</button>
+    </div>
+    <div class="dash-nav-right">
+      <span class="dash-xp">✧ <span class="xp-val">50</span> XP</span>
+      <div class="dash-avatar" style="background:var(--teal)" onclick="showDash('profile')"></div>
+      <button class="dash-logout" onclick="doLogout()" title="Log out"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </nav>
+  <div class="dash-content">
+    <h1 class="dash-title">SWAP REQUESTS</h1>
+    <div class="req-grid" style="margin-top:1.5rem">
+      <div class="req-col"><div class="req-col-title">INCOMING (<span id="inc-count">0</span>)</div><div id="incoming-list"></div></div>
+      <div class="req-col"><div class="req-col-title">OUTGOING (<span id="out-count">0</span>)</div><div id="outgoing-list"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: PROFILE ════════════════ -->
+<div id="page-profile" class="page">
+  <nav class="dash-nav">
+    <div class="dash-nav-left">
+      <div class="dash-logo">SWAP</div>
+      <button class="dash-tab" onclick="showDash('discover')">✦ DISCOVER</button>
+      <button class="dash-tab" onclick="showDash('requests')">📨 REQUESTS</button>
+      <button class="dash-tab active" onclick="showDash('profile')">◈ PROFILE</button>
+    </div>
+    <div class="dash-nav-right">
+      <span class="dash-xp">✧ <span class="xp-val">50</span> XP</span>
+      <div class="dash-avatar" style="background:var(--teal)" onclick="showDash('profile')"></div>
+      <button class="dash-logout" onclick="doLogout()" title="Log out"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </nav>
+  <div class="dash-content">
+    <h1 class="dash-title">YOUR PROFILE</h1>
+    <div class="profile-card" id="profile-card"></div>
+  </div>
+</div>
+
+<!-- ═══ OVERLAYS ═══ -->
+<div id="toast"></div>
+<div id="success-overlay" class="success-overlay"><div class="success-box" onclick="event.stopPropagation()"><div style="font-size:2.5rem;margin-bottom:.5rem">🎉</div><h2 id="success-title"></h2><p id="success-msg"></p><button class="btn-success" id="success-btn" onclick="closeSuccess()">Let's Go →</button></div></div>
+<div id="edit-overlay" class="edit-overlay" onclick="closeEdit()"><div class="edit-box" onclick="event.stopPropagation()" id="edit-box"></div></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════ */
+const SKILLS_LIST = [
+  'JavaScript','TypeScript','React','Next.js','Vue','Angular','Svelte',
+  'Node.js','Express','Django','Flask','FastAPI','Ruby on Rails','Spring Boot',
+  'Python','Java','C++','Rust','Go','Swift','Kotlin','PHP','SQL','MongoDB',
+  'GraphQL','Docker','AWS','Git','Figma','Photoshop','UI/UX Design',
+  'Spanish','French','German','Japanese','Mandarin','Korean','Hindi',
+  'Piano','Guitar','Drawing','Photography','Video Editing','Machine Learning',
+  'Data Science','Cybersecurity','Blockchain','3D Modeling','Blender','Unity'
+];
+
+const AVATAR_COLORS = ['#00B4D8','#FF6B9D','#FFD93D','#6BCB77','#C780FA','#FF9F43','#4D96FF','#FF6B6B'];
+
+const DEMO_MATCHES = [
+  {name:'Diego Ramos',handle:'diego',college:'Stanford',location:'Palo Alto',canTeach:['Spanish'],wantLearn:['Python'],bio:'Native Spanish speaker, love coding.',color:'#00B4D8',emoji:'😎'},
+  {name:'Lina Park',handle:'lina',college:"Seoul Nat'l Univ",location:'Seoul',canTeach:['Piano'],wantLearn:['Python'],bio:'Piano player, learning to code.',color:'#FFD93D',emoji:'🎹'},
+  {name:'Kenji Tanaka',handle:'kenji',college:'IIT Bombay',location:'Mumbai',canTeach:['JavaScript'],wantLearn:['Python'],bio:'Hardware + JS hacker.',color:'#6BCB77',emoji:'⚡'},
+  {name:'Sam Wilson',handle:'sam',college:'Stanford',location:'Palo Alto',canTeach:['Guitar'],wantLearn:['React'],bio:'Strumming & studying CS.',color:'#C780FA',emoji:'🎸'},
+  {name:'Aria Chen',handle:'aria',college:'MIT',location:'Boston',canTeach:['Figma'],wantLearn:['Vue'],bio:'UI/UX designer, love coffee and Figma.',color:'#FF9F43',emoji:'🎨'},
+  {name:'Leo Martin',handle:'leo',college:'Sorbonne',location:'Paris',canTeach:['French'],wantLearn:['3D Modeling'],bio:'Math + 3D modeling lover.',color:'#4D96FF',emoji:'🧊'},
+];
+
+let user = {
+  username:'',displayName:'',bio:'',college:'',degree:'',year:'',location:'',
+  canTeach:[],wantLearn:[],xp:50,level:1,rank:'Beginner'
+};
+let outgoingRequests = [];
+let incomingRequests = [];
+let obStep = 0;
+let successCallback = null;
+
+/* ══════════════════════════════════════════════
+   ROUTING
+══════════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  const c = document.querySelector('#page-' + name + ' .auth-card');
+  if (c) { c.style.animation = 'none'; c.offsetHeight; c.style.animation = ''; }
+  const oc = document.querySelector('#page-' + name + ' .ob-card');
+  if (oc) { oc.style.animation = 'none'; oc.offsetHeight; oc.style.animation = ''; }
+}
+
+function showDash(tab) {
+  const map = { discover:'page-discover', requests:'page-requests', profile:'page-profile' };
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(map[tab]).classList.add('active');
+  window.scrollTo(0, 0);
+  if (tab === 'discover') renderMatches();
+  if (tab === 'requests') renderRequests();
+  if (tab === 'profile')  renderProfile();
+  // update all nav tabs
+  document.querySelectorAll('.dash-tab').forEach(t => {
+    t.classList.toggle('active', t.textContent.toLowerCase().includes(tab.substring(0,4)));
+  });
+  // update avatars
+  document.querySelectorAll('.dash-avatar').forEach(a => {
+    a.textContent = user.username ? user.username[0].toUpperCase() : '?';
+  });
+}
+
+function doLogout() {
+  user = {username:'',displayName:'',bio:'',college:'',degree:'',year:'',location:'',canTeach:[],wantLearn:[],xp:50,level:1,rank:'Beginner'};
+  outgoingRequests = [];
+  incomingRequests = [];
+  showPage('home');
+  showToast('Logged out!');
+}
+
+/* ══════════════════════════════════════════════
+   TOAST / SUCCESS
+══════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+function showSuccess(title, msg, btnText, cb) {
+  document.getElementById('success-title').textContent = title;
+  document.getElementById('success-msg').textContent = msg;
+  document.getElementById('success-btn').textContent = btnText || "Let's Go →";
+  document.getElementById('success-overlay').classList.add('show');
+  successCallback = cb || null;
+}
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('show');
+  if (successCallback) successCallback();
+  else showPage('home');
+}
+
+/* ══════════════════════════════════════════════
+   AUTH HELPERS
+══════════════════════════════════════════════ */
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password'; inp.type = show ? 'text' : 'password';
+  const eye = document.getElementById('eye-' + id);
+  eye.innerHTML = show
+    ? '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>'
+    : '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>';
+}
+function updateStrength(v) {
+  const f = document.getElementById('strength-fill'), l = document.getElementById('strength-lbl');
+  let s = 0; if(v.length>=6) s++; if(v.length>=10) s++; if(/[A-Z]/.test(v)) s++; if(/[0-9]/.test(v)) s++; if(/[^A-Za-z0-9]/.test(v)) s++;
+  const lvls = [{w:'0%',bg:'#ddd',t:''},{w:'25%',bg:'#FF6B6B',t:'Weak'},{w:'50%',bg:'#FFD93D',t:'Fair'},{w:'75%',bg:'#4D96FF',t:'Good'},{w:'100%',bg:'#6BCB77',t:'Strong 💪'}];
+  const lv = v.length===0 ? lvls[0] : lvls[Math.min(s,4)];
+  f.style.width=lv.w; f.style.background=lv.bg; l.textContent=lv.t;
+}
+function setError(id, err) { const e=document.getElementById(id); if(err) e.classList.add('has-error'); else e.classList.remove('has-error'); return err; }
+
+function handleSignup(e) {
+  e.preventDefault();
+  const u=document.getElementById('su-username').value.trim(), p=document.getElementById('su-password').value, c=document.getElementById('su-confirm').value;
+  const dn=document.getElementById('su-displayname').value.trim();
+  if(setError('field-username',u.length<3)|setError('field-password',p.length<6)|setError('field-confirm',p!==c)) return;
+  const btn=e.target.querySelector('.btn-submit'); btn.textContent='Creating…'; btn.disabled=true;
+  setTimeout(()=>{
+    btn.innerHTML='Create Account →'; btn.disabled=false;
+    user.username=u; user.displayName=dn||u; user.xp=50;
+    startOnboarding();
+  },1000);
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const u=document.getElementById('li-username').value.trim(), p=document.getElementById('li-password').value;
+  if(setError('field-li-user',!u)|setError('field-li-pw',!p)) return;
+  const btn=e.target.querySelector('.btn-submit'); btn.textContent='Logging in…'; btn.disabled=true;
+  setTimeout(()=>{
+    btn.innerHTML='Log In →'; btn.disabled=false;
+    user.username=u; user.displayName=u;
+    if(!user.canTeach.length) { user.canTeach=['Python']; user.wantLearn=['Next.js']; user.bio='Ready to swap!'; user.college='My College'; user.degree='CS'; user.year='2'; user.location='My City'; }
+    showDash('discover');
+    showToast('Welcome back, @'+u+'!');
+  },800);
+}
+
+/* ══════════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════════ */
+const OB_STEPS = ['bio','education','skills','done'];
+
+function startOnboarding() {
+  obStep = 0;
+  showPage('onboarding');
+  renderOBStep();
+}
+
+function renderOBProgress() {
+  const wrap = document.getElementById('ob-progress');
+  const colors = ['#FF6B6B','#FFD93D','#FF6B6B','var(--black)'];
+  wrap.innerHTML = OB_STEPS.map((_, i) =>
+    `<div class="ob-dot" style="background:${i <= obStep ? colors[i] : '#ddd'}"></div>`
+  ).join('');
+}
+
+function renderOBStep() {
+  renderOBProgress();
+  const card = document.getElementById('ob-card');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
+  switch(OB_STEPS[obStep]) {
+    case 'bio': return renderOBBio(card);
+    case 'education': return renderOBEducation(card);
+    case 'skills': return renderOBSkills(card);
+    case 'done': return renderOBDone(card);
+  }
+}
+
+function renderOBBio(card) {
+  card.innerHTML = `
+    <div class="ob-title">ABOUT YOU</div>
+    <div class="field"><label>Display Name</label><input id="ob-name" type="text" value="${user.displayName}" placeholder="Your name"/></div>
+    <div class="field"><label>Bio</label><textarea id="ob-bio" placeholder="Tell others about yourself in a few words…" rows="3">${user.bio}</textarea></div>
+    <div class="ob-footer">
+      <div></div>
+      <button class="btn-ob btn-ob-next" onclick="saveOBBio()">NEXT <span>→</span></button>
+    </div>`;
+}
+
+function saveOBBio() {
+  user.displayName = document.getElementById('ob-name').value.trim() || user.username;
+  user.bio = document.getElementById('ob-bio').value.trim();
+  obStep = 1; renderOBStep();
+}
+
+function renderOBEducation(card) {
+  card.innerHTML = `
+    <div class="ob-title">EDUCATION</div>
+    <div class="field"><label>College / University</label><input id="ob-college" type="text" value="${user.college}" placeholder="e.g. Stanford"/></div>
+    <div class="field"><label>Degree / Major</label><input id="ob-degree" type="text" value="${user.degree}" placeholder="e.g. Computer Science"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="field"><label>Year</label><select id="ob-year" style="width:100%;padding:.65rem .85rem;border:2px solid var(--black);font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:500;outline:none;background:var(--white)">
+        <option value="">Select</option><option ${user.year==='1'?'selected':''}>1</option><option ${user.year==='2'?'selected':''}>2</option><option ${user.year==='3'?'selected':''}>3</option><option ${user.year==='4'?'selected':''}>4</option><option ${user.year==='5'?'selected':''}>5</option><option value="grad" ${user.year==='grad'?'selected':''}>Grad</option></select></div>
+      <div class="field"><label>Location</label><input id="ob-loc" type="text" value="${user.location}" placeholder="e.g. Palo Alto"/></div>
+    </div>
+    <div class="ob-footer">
+      <button class="btn-ob btn-ob-back" onclick="obStep=0;renderOBStep()">BACK</button>
+      <button class="btn-ob btn-ob-next" onclick="saveOBEdu()">NEXT <span>→</span></button>
+    </div>`;
+}
+
+function saveOBEdu() {
+  user.college = document.getElementById('ob-college').value.trim();
+  user.degree = document.getElementById('ob-degree').value.trim();
+  user.year = document.getElementById('ob-year').value;
+  user.location = document.getElementById('ob-loc').value.trim();
+  obStep = 2; renderOBStep();
+}
+
+function renderOBSkills(card) {
+  const teachTags = user.canTeach.map(s => `<span class="skill-tag skill-tag-teach">${s} <span class="tag-x" onclick="removeSkill('teach','${s}')">&times;</span></span>`).join('');
+  const learnTags = user.wantLearn.map(s => `<span class="skill-tag skill-tag-learn">${s} <span class="tag-x" onclick="removeSkill('learn','${s}')">&times;</span></span>`).join('');
+  const teachSugs = SKILLS_LIST.filter(s => !user.canTeach.includes(s)).slice(0, 14);
+  const learnSugs = SKILLS_LIST.filter(s => !user.wantLearn.includes(s)).slice(0, 14);
+  card.innerHTML = `
+    <div class="ob-title">SKILLS</div>
+    <div class="ob-subtitle">I CAN TEACH</div>
+    <div class="skill-tags" id="teach-tags">${teachTags}</div>
+    <div class="skill-input-row"><input id="teach-input" type="text" placeholder="Search or type a skill" onkeydown="if(event.key==='Enter'){event.preventDefault();addSkillFromInput('teach')}"/><button class="skill-add-btn" onclick="addSkillFromInput('teach')">+</button></div>
+    <div class="skill-suggestions">${teachSugs.map(s => `<button class="skill-sug" onclick="addSkill('teach','${s}')">+ ${s}</button>`).join('')}<button class="skill-more" onclick="showToast('Showing all ${SKILLS_LIST.length} skills')">+${SKILLS_LIST.length - 14} more</button></div>
+    <div style="margin-top:1.5rem"></div>
+    <div class="ob-subtitle">I WANT TO LEARN</div>
+    <div class="skill-tags" id="learn-tags">${learnTags}</div>
+    <div class="skill-input-row"><input id="learn-input" type="text" placeholder="Search or type a skill" onkeydown="if(event.key==='Enter'){event.preventDefault();addSkillFromInput('learn')}"/><button class="skill-add-btn" onclick="addSkillFromInput('learn')">+</button></div>
+    <div class="skill-suggestions">${learnSugs.map(s => `<button class="skill-sug" onclick="addSkill('learn','${s}')">+ ${s}</button>`).join('')}<button class="skill-more" onclick="showToast('Showing all ${SKILLS_LIST.length} skills')">+${SKILLS_LIST.length - 14} more</button></div>
+    <div class="ob-footer">
+      <button class="btn-ob btn-ob-back" onclick="obStep=1;renderOBStep()">BACK</button>
+      <button class="btn-ob btn-ob-next" onclick="saveOBSkills()">NEXT <span>→</span></button>
+    </div>`;
+}
+
+function addSkill(type, skill) {
+  const arr = type === 'teach' ? user.canTeach : user.wantLearn;
+  if (!arr.includes(skill)) { arr.push(skill); renderOBSkills(document.getElementById('ob-card')); }
+}
+function addSkillFromInput(type) {
+  const inp = document.getElementById(type + '-input');
+  const v = inp.value.trim();
+  if (v) { addSkill(type, v); inp.value = ''; }
+}
+function removeSkill(type, skill) {
+  if (type === 'teach') user.canTeach = user.canTeach.filter(s => s !== skill);
+  else user.wantLearn = user.wantLearn.filter(s => s !== skill);
+  renderOBSkills(document.getElementById('ob-card'));
+}
+function saveOBSkills() {
+  if (!user.canTeach.length && !user.wantLearn.length) { showToast('Add at least one skill!'); return; }
+  obStep = 3; renderOBStep();
+}
+
+function renderOBDone(card) {
+  card.innerHTML = `
+    <div style="text-align:center;padding:2rem 0">
+      <div style="font-size:3rem;margin-bottom:.75rem">🎉</div>
+      <div class="ob-title" style="font-size:1.8rem">YOU'RE ALL SET!</div>
+      <p style="font-weight:500;margin-bottom:.5rem;opacity:.8">Profile created. You earned <strong>+50 XP</strong>!</p>
+      <p style="font-weight:500;margin-bottom:2rem;opacity:.7">Time to find your first skill swap.</p>
+      <button class="btn-ob btn-ob-next" style="margin:0 auto;padding:.85rem 2rem;font-size:1rem" onclick="finishOnboarding()">START SWAPPING <span>→</span></button>
+    </div>`;
+}
+
+function finishOnboarding() {
+  showDash('discover');
+  showToast('Welcome to SWAP, @' + user.username + '! 🎉');
+}
+
+/* ══════════════════════════════════════════════
+   DISCOVER
+══════════════════════════════════════════════ */
+function getMatchScore(m) {
+  let score = 0;
+  const teachOverlap = m.canTeach.filter(s => user.wantLearn.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+  const learnOverlap = m.wantLearn.filter(s => user.canTeach.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+  if (teachOverlap.length) score += 25;
+  if (learnOverlap.length) score += 25;
+  if (user.college && m.college.toLowerCase().includes(user.college.toLowerCase().substring(0,4))) score += 25;
+  if (user.location && m.location.toLowerCase().includes(user.location.toLowerCase().substring(0,3))) score += 25;
+  return Math.min(score, 100);
+}
+
+function renderMatches() {
+  const grid = document.getElementById('match-grid');
+  const search = document.querySelector('#page-discover .search-box input').value.toLowerCase();
+  const college = document.querySelector('#page-discover .filter-box select').value.toLowerCase();
+
+  // populate college filter
+  const sel = document.querySelector('#page-discover .filter-box select');
+  const colleges = [...new Set(DEMO_MATCHES.map(m => m.college))];
+  if (sel.options.length <= 1) {
+    colleges.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+  }
+
+  let matches = DEMO_MATCHES.map(m => ({...m, score: getMatchScore(m)})).sort((a,b) => b.score - a.score);
+  if (search) matches = matches.filter(m => (m.name+m.handle+m.canTeach.join('')+m.college).toLowerCase().includes(search));
+  if (college) matches = matches.filter(m => m.college.toLowerCase() === college);
+
+  const matchSkill = (m) => {
+    const learnOverlap = m.wantLearn.filter(s => user.canTeach.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+    return learnOverlap.length ? user.canTeach.find(s => learnOverlap.map(x=>x.toLowerCase()).includes(s.toLowerCase())) : user.canTeach[0] || 'skills';
+  };
+
+  grid.innerHTML = matches.map(m => {
+    const sent = outgoingRequests.some(r => r.handle === m.handle);
+    const badgeBg = m.score >= 50 ? 'var(--green)' : m.score >= 20 ? 'var(--yellow)' : 'var(--white)';
+    return `
+    <div class="match-card" style="background:${m.color}20;border-color:var(--black)">
+      <div class="mc-top">
+        <div class="mc-user">
+          <div class="mc-avatar" style="background:${m.color}">${m.emoji}</div>
+          <div><div class="mc-name">${m.name}</div><div class="mc-handle">@${m.handle}</div></div>
+        </div>
+        <div class="mc-badge" style="background:${badgeBg}">${m.score}%<small>MATCH</small></div>
+      </div>
+      <div class="mc-meta"><span>🎓 ${m.college}</span><span>📍 ${m.location}</span></div>
+      <div class="mc-label">YOU CAN TEACH THEM</div>
+      <div><span class="mc-skill-tag">${matchSkill(m)}</span></div>
+      <div class="mc-bio">${m.bio}</div>
+      ${sent
+        ? '<button class="btn-swap sent">✓ REQUEST SENT</button>'
+        : `<button class="btn-swap" onclick="sendSwapRequest('${m.handle}','${m.name}','${matchSkill(m)}','${m.canTeach[0]}')">✦ SEND SWAP REQUEST</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function filterMatches() { renderMatches(); }
+
+function sendSwapRequest(handle, name, youTeach, youLearn) {
+  outgoingRequests.push({ handle, name, youTeach, youLearn, status: 'pending' });
+  user.xp += 10;
+  document.querySelectorAll('.xp-val').forEach(el => el.textContent = user.xp);
+  document.querySelectorAll('.dash-xp').forEach(el => { if(!el.querySelector('.xp-val')) el.innerHTML = '✧ ' + user.xp + ' XP'; });
+  renderMatches();
+  showToast(`Swap request sent to @${handle}! +10 XP`);
+
+  // simulate incoming after 3s
+  setTimeout(() => {
+    incomingRequests.push({
+      handle: handle, name: name,
+      theyTeach: youLearn, theyLearn: youTeach, status: 'pending'
+    });
+  }, 3000);
+}
+
+/* ══════════════════════════════════════════════
+   REQUESTS
+══════════════════════════════════════════════ */
+function renderRequests() {
+  const inc = document.getElementById('incoming-list');
+  const out = document.getElementById('outgoing-list');
+  document.getElementById('inc-count').textContent = incomingRequests.length;
+  document.getElementById('out-count').textContent = outgoingRequests.length;
+
+  if (!incomingRequests.length) {
+    inc.innerHTML = '<div class="req-empty">No incoming requests yet.</div>';
+  } else {
+    inc.innerHTML = incomingRequests.map((r, i) => `
+      <div class="req-item">
+        <div class="req-item-info">
+          <div class="req-item-user">@${r.handle}</div>
+          <div class="req-item-detail">They teach: ${r.theyTeach} · They learn: ${r.theyLearn}</div>
+        </div>
+        ${r.status === 'pending'
+          ? `<div class="req-actions"><button class="req-act-btn req-accept" onclick="acceptReq(${i})">Accept</button><button class="req-act-btn req-decline" onclick="declineReq(${i})">Decline</button></div>`
+          : `<span class="req-status ${r.status}">${r.status}</span>`}
+      </div>`).join('');
+  }
+
+  if (!outgoingRequests.length) {
+    out.innerHTML = '<div class="req-empty">No outgoing requests yet.</div>';
+  } else {
+    out.innerHTML = outgoingRequests.map(r => `
+      <div class="req-item">
+        <div class="req-item-info">
+          <div class="req-item-user">@${r.handle}</div>
+          <div class="req-item-detail">You teach: ${r.youTeach} · You learn: ${r.youLearn}</div>
+        </div>
+        <span class="req-status ${r.status}">${r.status}</span>
+      </div>`).join('');
+  }
+}
+
+function acceptReq(i) {
+  incomingRequests[i].status = 'accepted';
+  // also mark outgoing from them as accepted
+  const h = incomingRequests[i].handle;
+  const oreq = outgoingRequests.find(r => r.handle === h);
+  if (oreq) oreq.status = 'accepted';
+  user.xp += 25;
+  renderRequests();
+  showToast(`Swap accepted with @${h}! +25 XP 🎉`);
+}
+
+function declineReq(i) {
+  incomingRequests[i].status = 'declined';
+  renderRequests();
+  showToast('Request declined.');
+}
+
+/* ══════════════════════════════════════════════
+   PROFILE
+══════════════════════════════════════════════ */
+function renderProfile() {
+  const card = document.getElementById('profile-card');
+  const tc = user.canTeach.map(s => `<span class="skill-tag skill-tag-teach" style="font-size:.75rem">${s}</span>`).join('') || '<span style="opacity:.5;font-size:.85rem">None yet</span>';
+  const lc = user.wantLearn.map(s => `<span class="skill-tag skill-tag-learn" style="font-size:.75rem">${s}</span>`).join('') || '<span style="opacity:.5;font-size:.85rem">None yet</span>';
+  card.innerHTML = `
+    <div class="pc-top">
+      <div class="pc-avatar" style="background:var(--teal)">${user.username ? user.username[0].toUpperCase() : '?'}</div>
+      <div class="pc-info">
+        <div class="pc-name">${user.displayName || user.username}</div>
+        <div class="pc-handle">@${user.username}</div>
+        <div class="pc-badges">
+          <span class="pc-badge pc-badge-xp">✧ ${user.xp} XP</span>
+          <span class="pc-badge pc-badge-lvl">✦ Level ${user.level}</span>
+          <span class="pc-badge pc-badge-rank">${user.rank}</span>
+        </div>
+      </div>
+      <button class="btn-edit" onclick="openEdit()">EDIT</button>
+    </div>
+    <div class="pc-bio">${user.bio || '<span style="opacity:.5">No bio yet.</span>'}</div>
+    <div class="pc-stats">
+      <div><div class="pc-stat-lbl">College</div><div class="pc-stat-val">${user.college || '—'}</div></div>
+      <div><div class="pc-stat-lbl">Degree</div><div class="pc-stat-val">${user.degree || '—'}</div></div>
+      <div><div class="pc-stat-lbl">Year</div><div class="pc-stat-val">${user.year || '—'}</div></div>
+      <div><div class="pc-stat-lbl">Location</div><div class="pc-stat-val">${user.location || '—'}</div></div>
+    </div>
+    <div class="pc-section-lbl">CAN TEACH</div><div class="pc-tags">${tc}</div>
+    <div class="pc-section-lbl" style="margin-top:.85rem">WANTS TO LEARN</div><div class="pc-tags">${lc}</div>`;
+}
+
+/* ══════════════════════════════════════════════
+   EDIT PROFILE
+══════════════════════════════════════════════ */
+function openEdit() {
+  const box = document.getElementById('edit-box');
+  box.innerHTML = `
+    <div class="edit-title">EDIT PROFILE</div>
+    <div class="field"><label>Display Name</label><input id="ed-name" value="${user.displayName}"/></div>
+    <div class="field"><label>Bio</label><textarea id="ed-bio" rows="2">${user.bio}</textarea></div>
+    <div class="field"><label>College</label><input id="ed-college" value="${user.college}"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="field"><label>Degree</label><input id="ed-degree" value="${user.degree}"/></div>
+      <div class="field"><label>Year</label><input id="ed-year" value="${user.year}"/></div>
+    </div>
+    <div class="field"><label>Location</label><input id="ed-loc" value="${user.location}"/></div>
+    <div class="edit-actions">
+      <button class="btn-ob btn-ob-back" onclick="closeEdit()">CANCEL</button>
+      <button class="btn-ob btn-ob-next" onclick="saveEdit()">SAVE</button>
+    </div>`;
+  document.getElementById('edit-overlay').classList.add('show');
+}
+function closeEdit() { document.getElementById('edit-overlay').classList.remove('show'); }
+function saveEdit() {
+  user.displayName = document.getElementById('ed-name').value.trim();
+  user.bio = document.getElementById('ed-bio').value.trim();
+  user.college = document.getElementById('ed-college').value.trim();
+  user.degree = document.getElementById('ed-degree').value.trim();
+  user.year = document.getElementById('ed-year').value.trim();
+  user.location = document.getElementById('ed-loc').value.trim();
+  closeEdit(); renderProfile();
+  showToast('Profile updated!');
+}
+</script>
+</body>
+</html>
