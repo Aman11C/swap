@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -420,7 +421,7 @@
         <button class="btn-google" onclick="showToast('Google sign-up coming soon!')"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button>
         <div class="auth-divider">or</div>
         <form id="signup-form" novalidate onsubmit="handleSignup(event)">
-          <div class="field" id="field-username"><label for="su-username">Username</label><input id="su-username" type="text" placeholder="e.g. taylor" autocomplete="username"/><span class="field-error">Username must be at least 3 characters.</span></div>
+          <div class="field" id="field-email"><label for="su-email">Email</label><input id="su-email" type="email" placeholder="e.g. taylor@stanford.edu" autocomplete="email"/><span class="field-error">Please enter a valid email.</span></div>
           <div class="field" id="field-displayname"><label for="su-displayname">Display Name</label><input id="su-displayname" type="text" placeholder="Your name (optional)" autocomplete="name"/></div>
           <div class="field" id="field-password"><label for="su-password">Password</label><div class="pw-wrap"><input id="su-password" type="password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateStrength(this.value)"/><button type="button" class="pw-toggle" onclick="togglePw('su-password',this)"><svg id="eye-su-password" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="strength-wrap"><div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div><div class="strength-lbl" id="strength-lbl"></div></div><span class="field-error">Password must be at least 6 characters.</span></div>
           <div class="field" id="field-confirm"><label for="su-confirm">Confirm Password</label><div class="pw-wrap"><input id="su-confirm" type="password" placeholder="Repeat password" autocomplete="new-password"/><button type="button" class="pw-toggle" onclick="togglePw('su-confirm',this)"><svg id="eye-su-confirm" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><span class="field-error">Passwords do not match.</span></div>
@@ -444,7 +445,7 @@
         <button class="btn-google" onclick="showToast('Google login coming soon!')"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google</button>
         <div class="auth-divider">or</div>
         <form id="login-form" novalidate onsubmit="handleLogin(event)">
-          <div class="field" id="field-li-user"><label for="li-username">Username or Email</label><input id="li-username" type="text" placeholder="e.g. taylor" autocomplete="username"/><span class="field-error">Please enter your username or email.</span></div>
+          <div class="field" id="field-li-email"><label for="li-email">Email</label><input id="li-email" type="email" placeholder="e.g. taylor@stanford.edu" autocomplete="email"/><span class="field-error">Please enter your email.</span></div>
           <div class="field" id="field-li-pw"><label for="li-password">Password</label><div class="pw-wrap"><input id="li-password" type="password" placeholder="Your password" autocomplete="current-password"/><button type="button" class="pw-toggle" onclick="togglePw('li-password',this)"><svg id="eye-li-password" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div><a class="forgot-link" onclick="showToast('Password reset link sent! (demo)')">Forgot password?</a><span class="field-error">Please enter your password.</span></div>
           <button type="submit" class="btn-submit">Log In <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></button>
         </form>
@@ -545,6 +546,51 @@
 
 <script>
 /* ══════════════════════════════════════════════
+   SUPABASE INIT
+══════════════════════════════════════════════ */
+const { createClient } = supabase;
+const sb = createClient('https://mrbgadtpvlcgujbsllcw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yYmdhZHRwdmxjZ3VqYnNsbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjA4MjcsImV4cCI6MjA5ODM5NjgyN30.KG_bzJf6vjxmnRbEVuE_Xz1ABvbOZMMntOEkqKf2sJE');
+
+async function api(path, options = {}) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+  const res = await fetch('http://localhost:3001/api' + path, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token, ...options.headers },
+  });
+  if (!res.ok) { const err = await res.json().catch(() => ({ error: res.statusText })); throw new Error(err.error || res.statusText); }
+  return res.json();
+}
+
+let skillNameToId = {};
+
+async function loadSkillMap() {
+  try { const cats = await api('/skills/categories'); skillNameToId = {}; cats.forEach(c => c.skills.forEach(s => skillNameToId[s.name] = s.id)); }
+  catch (e) { console.warn('Failed to load skills:', e); }
+}
+
+async function initSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return false;
+  try {
+    const profile = await api('/profiles/me');
+    const { data: { user: au } } = await sb.auth.getUser();
+    user.username = au.user_metadata.username || au.email?.split('@')[0] || '';
+    user.displayName = profile.display_name || user.username;
+    user.bio = profile.bio || '';
+    user.college = profile.college || '';
+    user.degree = profile.degree || '';
+    user.year = profile.year || '';
+    user.location = profile.location || '';
+    user.canTeach = profile.teaching_skills?.map(s => s.name) || [];
+    user.wantLearn = profile.learning_skills?.map(s => s.name) || [];
+    user.is_onboarded = profile.is_onboarded;
+    if (profile.is_onboarded) { showDash('discover'); } else { startOnboarding(); }
+    return true;
+  } catch (e) { console.warn('Session restore failed:', e); return false; }
+}
+
+/* ══════════════════════════════════════════════
    DATA
 ══════════════════════════════════════════════ */
 const SKILLS_LIST = [
@@ -574,14 +620,45 @@ const SKILLS_LIST = [
 
 const AVATAR_COLORS = ['#00B4D8','#FF6B9D','#FFD93D','#6BCB77','#C780FA','#FF9F43','#4D96FF','#FF6B6B'];
 
-const DEMO_MATCHES = [
-  {name:'Diego Ramos',handle:'diego',college:'Stanford',location:'Palo Alto',canTeach:['Spanish'],wantLearn:['Python'],bio:'Native Spanish speaker, love coding.',color:'#00B4D8',emoji:'😎'},
-  {name:'Lina Park',handle:'lina',college:"Seoul Nat'l Univ",location:'Seoul',canTeach:['Piano'],wantLearn:['Python'],bio:'Piano player, learning to code.',color:'#FFD93D',emoji:'🎹'},
-  {name:'Kenji Tanaka',handle:'kenji',college:'IIT Bombay',location:'Mumbai',canTeach:['JavaScript'],wantLearn:['Python'],bio:'Hardware + JS hacker.',color:'#6BCB77',emoji:'⚡'},
-  {name:'Sam Wilson',handle:'sam',college:'Stanford',location:'Palo Alto',canTeach:['Guitar'],wantLearn:['React'],bio:'Strumming & studying CS.',color:'#C780FA',emoji:'🎸'},
-  {name:'Aria Chen',handle:'aria',college:'MIT',location:'Boston',canTeach:['Figma'],wantLearn:['Vue'],bio:'UI/UX designer, love coffee and Figma.',color:'#FF9F43',emoji:'🎨'},
-  {name:'Leo Martin',handle:'leo',college:'Sorbonne',location:'Paris',canTeach:['French'],wantLearn:['3D Modeling'],bio:'Math + 3D modeling lover.',color:'#4D96FF',emoji:'🧊'},
-];
+let matchesCache = [];
+async function fetchMatches() {
+  try {
+    const { data: matches } = await api('/profiles/search?limit=100');
+    const categories = (await api('/skills/categories')).data || [];
+    const allSkills = categories.reduce((a, c) => a.concat(c.skills || []), []);
+    matchesCache = (matches || []).map((m, i) => ({
+      id: m.id,
+      name: m.display_name || m.username,
+      handle: m.username,
+      college: m.college || '',
+      location: m.location || '',
+      bio: m.bio || '',
+      color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+      emoji: m.avatar_emoji || '👤',
+      score: m.match_score || Math.floor(Math.random() * 31) + 60,
+      canTeach: m.teaching_skills?.map(s => s.name) || [],
+      wantLearn: m.learning_skills?.map(s => s.name) || []
+    }));
+  } catch (e) { console.warn('Failed to load matches:', e); matchesCache = []; }
+}
+async function fetchRequests() {
+  try {
+    const sent = await api('/swap-requests?direction=sent');
+    const received = await api('/swap-requests?direction=received');
+    outgoingRequests = (sent.data || []).map(r => ({
+      id: r.id, handle: r.receiver?.username || '',
+      name: r.receiver?.display_name || r.receiver?.username || '',
+      status: r.status,
+      youTeach: r.skill_offered?.name || '', youLearn: r.skill_requested?.name || ''
+    }));
+    incomingRequests = (received.data || []).map(r => ({
+      id: r.id, handle: r.sender?.username || '',
+      name: r.sender?.display_name || r.sender?.username || '',
+      status: r.status,
+      theyTeach: r.skill_offered?.name || '', theyLearn: r.skill_requested?.name || ''
+    }));
+  } catch (e) { console.warn('Failed to load requests:', e); outgoingRequests = []; incomingRequests = []; }
+}
 
 let user = {
   username:'',displayName:'',bio:'',college:'',degree:'',year:'',location:'',
@@ -605,13 +682,13 @@ function showPage(name) {
   if (oc) { oc.style.animation = 'none'; oc.offsetHeight; oc.style.animation = ''; }
 }
 
-function showDash(tab) {
+async function showDash(tab) {
   const map = { discover:'page-discover', requests:'page-requests', profile:'page-profile' };
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(map[tab]).classList.add('active');
   window.scrollTo(0, 0);
-  if (tab === 'discover') renderMatches();
-  if (tab === 'requests') renderRequests();
+  if (tab === 'discover') { await fetchMatches(); renderMatches(); }
+  if (tab === 'requests') { await fetchRequests(); renderRequests(); }
   if (tab === 'profile')  renderProfile();
   // update all nav tabs
   document.querySelectorAll('.dash-tab').forEach(t => {
@@ -623,10 +700,10 @@ function showDash(tab) {
   });
 }
 
-function doLogout() {
-  user = {username:'',displayName:'',bio:'',college:'',degree:'',year:'',location:'',canTeach:[],wantLearn:[],xp:50,level:1,rank:'Beginner'};
-  outgoingRequests = [];
-  incomingRequests = [];
+async function doLogout() {
+  await sb.auth.signOut();
+  user = {username:'',displayName:'',bio:'',college:'',degree:'',year:'',location:'',canTeach:[],wantLearn:[],xp:50,level:1,rank:'Beginner',is_onboarded:false};
+  outgoingRequests = []; incomingRequests = []; matchesCache = [];
   showPage('home');
   showToast('Logged out!');
 }
@@ -675,29 +752,31 @@ function setError(id, err) { const e=document.getElementById(id); if(err) e.clas
 
 function handleSignup(e) {
   e.preventDefault();
-  const u=document.getElementById('su-username').value.trim(), p=document.getElementById('su-password').value, c=document.getElementById('su-confirm').value;
+  const email=document.getElementById('su-email').value.trim(), p=document.getElementById('su-password').value, c=document.getElementById('su-confirm').value;
   const dn=document.getElementById('su-displayname').value.trim();
-  if(setError('field-username',u.length<3)|setError('field-password',p.length<6)|setError('field-confirm',p!==c)) return;
+  if(setError('field-email',!/\S+@\S+\.\S+/.test(email))|setError('field-password',p.length<6)|setError('field-confirm',p!==c)) return;
+  const uname = email.split('@')[0];
   const btn=e.target.querySelector('.btn-submit'); btn.textContent='Creating…'; btn.disabled=true;
-  setTimeout(()=>{
+  sb.auth.signUp({ email, password, options: { data: { username: uname, display_name: dn || uname } } }).then(({ data, error }) => {
     btn.innerHTML='Create Account →'; btn.disabled=false;
-    user.username=u; user.displayName=dn||u; user.xp=50;
-    startOnboarding();
-  },1000);
+    if (error) { showToast(error.message); return; }
+    user.username = uname; user.displayName = dn || uname;
+    loadSkillMap().then(() => startOnboarding());
+  });
 }
 
 function handleLogin(e) {
   e.preventDefault();
-  const u=document.getElementById('li-username').value.trim(), p=document.getElementById('li-password').value;
-  if(setError('field-li-user',!u)|setError('field-li-pw',!p)) return;
+  const email=document.getElementById('li-email').value.trim(), p=document.getElementById('li-password').value;
+  if(setError('field-li-email',!email)|setError('field-li-pw',!p)) return;
   const btn=e.target.querySelector('.btn-submit'); btn.textContent='Logging in…'; btn.disabled=true;
-  setTimeout(()=>{
+  sb.auth.signInWithPassword({ email, password }).then(({ data, error }) => {
     btn.innerHTML='Log In →'; btn.disabled=false;
-    user.username=u; user.displayName=u;
-    if(!user.canTeach.length) { user.canTeach=['Python']; user.wantLearn=['Next.js']; user.bio='Ready to swap!'; user.college='My College'; user.degree='CS'; user.year='2'; user.location='My City'; }
-    showDash('discover');
-    showToast('Welcome back, @'+u+'!');
-  },800);
+    if (error) { showToast(error.message); return; }
+    loadSkillMap().then(() => initSession().then(ok => {
+      if (ok) showToast('Welcome back, @' + user.username + '!');
+    }));
+  });
 }
 
 /* ══════════════════════════════════════════════
@@ -872,7 +951,15 @@ function renderOBDone(card) {
     </div>`;
 }
 
-function finishOnboarding() {
+async function finishOnboarding() {
+  try {
+    await api('/profiles/me', {
+      method: 'PUT',
+      body: JSON.stringify({ display_name: user.displayName, bio: user.bio, college: user.college, degree: user.degree, year: user.year, location: user.location, is_onboarded: true }),
+    });
+    for (const s of user.canTeach) { const id = skillNameToId[s]; if (id) await api('/skills/teaching', { method: 'POST', body: JSON.stringify({ skill_id: id }) }); }
+    for (const s of user.wantLearn) { const id = skillNameToId[s]; if (id) await api('/skills/learning', { method: 'POST', body: JSON.stringify({ skill_id: id }) }); }
+  } catch (e) { showToast('Error saving profile: ' + e.message); return; }
   showDash('discover');
   showToast('Welcome to SWAP, @' + user.username + '! 🎉');
 }
@@ -898,12 +985,12 @@ function renderMatches() {
 
   // populate college filter
   const sel = document.querySelector('#page-discover .filter-box select');
-  const colleges = [...new Set(DEMO_MATCHES.map(m => m.college))];
+  const colleges = [...new Set(matchesCache.map(m => m.college).filter(Boolean))];
   if (sel.options.length <= 1) {
     colleges.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
   }
 
-  let matches = DEMO_MATCHES.map(m => ({...m, score: getMatchScore(m)})).sort((a,b) => b.score - a.score);
+  let matches = matchesCache.map(m => ({...m, score: getMatchScore(m)})).sort((a,b) => b.score - a.score);
   if (search) matches = matches.filter(m => (m.name+m.handle+m.canTeach.join('')+m.college).toLowerCase().includes(search));
   if (college) matches = matches.filter(m => m.college.toLowerCase() === college);
 
@@ -937,21 +1024,24 @@ function renderMatches() {
 
 function filterMatches() { renderMatches(); }
 
-function sendSwapRequest(handle, name, youTeach, youLearn) {
-  outgoingRequests.push({ handle, name, youTeach, youLearn, status: 'pending' });
-  user.xp += 10;
-  document.querySelectorAll('.xp-val').forEach(el => el.textContent = user.xp);
-  document.querySelectorAll('.dash-xp').forEach(el => { if(!el.querySelector('.xp-val')) el.innerHTML = '✧ ' + user.xp + ' XP'; });
-  renderMatches();
-  showToast(`Swap request sent to @${handle}! +10 XP`);
-
-  // simulate incoming after 3s
-  setTimeout(() => {
-    incomingRequests.push({
-      handle: handle, name: name,
-      theyTeach: youLearn, theyLearn: youTeach, status: 'pending'
+async function sendSwapRequest(handle, name, youTeach, youLearn) {
+  const match = matchesCache.find(m => m.handle === handle);
+  if (!match) { showToast('Could not find user: @' + handle); return; }
+  const skillOfferedId = skillNameToId[youTeach];
+  const skillRequestedId = skillNameToId[youLearn];
+  if (!skillOfferedId || !skillRequestedId) { showToast('Unknown skill IDs'); return; }
+  try {
+    await api('/swap-requests', {
+      method: 'POST',
+      body: JSON.stringify({ receiver_id: match.id, skill_offered_id: skillOfferedId, skill_requested_id: skillRequestedId }),
     });
-  }, 3000);
+    outgoingRequests.push({ id: null, handle, name, youTeach, youLearn, status: 'pending' });
+    user.xp += 10;
+    document.querySelectorAll('.xp-val').forEach(el => el.textContent = user.xp);
+    document.querySelectorAll('.dash-xp').forEach(el => { if(!el.querySelector('.xp-val')) el.innerHTML = '✧ ' + user.xp + ' XP'; });
+    renderMatches();
+    showToast(`Swap request sent to @${handle}! +10 XP`);
+  } catch (e) { showToast('Failed to send request: ' + e.message); }
 }
 
 /* ══════════════════════════════════════════════
@@ -992,21 +1082,35 @@ function renderRequests() {
   }
 }
 
-function acceptReq(i) {
-  incomingRequests[i].status = 'accepted';
-  // also mark outgoing from them as accepted
-  const h = incomingRequests[i].handle;
-  const oreq = outgoingRequests.find(r => r.handle === h);
-  if (oreq) oreq.status = 'accepted';
-  user.xp += 25;
-  renderRequests();
-  showToast(`Swap accepted with @${h}! +25 XP 🎉`);
+async function acceptReq(i) {
+  const req = incomingRequests[i];
+  if (!req || !req.id) { showToast('Cannot accept request without ID'); return; }
+  try {
+    await api('/swap-requests/' + req.id + '/status', {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'accepted' }),
+    });
+    req.status = 'accepted';
+    const oreq = outgoingRequests.find(r => r.handle === req.handle);
+    if (oreq) oreq.status = 'accepted';
+    user.xp += 25;
+    renderRequests();
+    showToast(`Swap accepted with @${req.handle}! +25 XP 🎉`);
+  } catch (e) { showToast('Failed to accept: ' + e.message); }
 }
 
-function declineReq(i) {
-  incomingRequests[i].status = 'declined';
-  renderRequests();
-  showToast('Request declined.');
+async function declineReq(i) {
+  const req = incomingRequests[i];
+  if (!req || !req.id) { showToast('Cannot decline request without ID'); return; }
+  try {
+    await api('/swap-requests/' + req.id + '/status', {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'declined' }),
+    });
+    req.status = 'declined';
+    renderRequests();
+    showToast('Request declined.');
+  } catch (e) { showToast('Failed to decline: ' + e.message); }
 }
 
 /* ══════════════════════════════════════════════
@@ -1078,16 +1182,34 @@ function openEdit() {
   document.getElementById('edit-overlay').classList.add('show');
 }
 function closeEdit() { document.getElementById('edit-overlay').classList.remove('show'); }
-function saveEdit() {
+async function saveEdit() {
   user.displayName = document.getElementById('ed-name').value.trim();
   user.bio = document.getElementById('ed-bio').value.trim();
   user.college = document.getElementById('ed-college').value.trim();
   user.degree = document.getElementById('ed-degree').value.trim();
   user.year = document.getElementById('ed-year').value.trim();
   user.location = document.getElementById('ed-loc').value.trim();
-  closeEdit(); renderProfile();
-  showToast('Profile updated!');
+  try {
+    await api('/profiles/me', {
+      method: 'PUT',
+      body: JSON.stringify({ display_name: user.displayName, bio: user.bio, college: user.college, degree: user.degree, year: user.year, location: user.location }),
+    });
+    // sync teaching skills
+    const teachRes = await api('/skills/teaching');
+    const oldTeach = teachRes?.data || teachRes || [];
+    for (const s of oldTeach) { if (!user.canTeach.includes(s.name)) await api('/skills/teaching', { method: 'DELETE', body: JSON.stringify({ skill_id: s.id }) }); }
+    for (const s of user.canTeach) { const id = skillNameToId[s]; if (id && !oldTeach.find(t => t.name === s)) await api('/skills/teaching', { method: 'POST', body: JSON.stringify({ skill_id: id }) }); }
+    // sync learning skills
+    const learnRes = await api('/skills/learning');
+    const oldLearn = learnRes?.data || learnRes || [];
+    for (const s of oldLearn) { if (!user.wantLearn.includes(s.name)) await api('/skills/learning', { method: 'DELETE', body: JSON.stringify({ skill_id: s.id }) }); }
+    for (const s of user.wantLearn) { const id = skillNameToId[s]; if (id && !oldLearn.find(t => t.name === s)) await api('/skills/learning', { method: 'POST', body: JSON.stringify({ skill_id: id }) }); }
+    closeEdit(); renderProfile();
+    showToast('Profile updated!');
+  } catch (e) { showToast('Failed to save: ' + e.message); }
 }
+
+document.addEventListener('DOMContentLoaded', () => loadSkillMap().then(() => initSession()));
 </script>
 </body>
 </html>

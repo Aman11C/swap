@@ -1,5 +1,5 @@
 -- Add updated_at column for edit tracking
-ALTER TABLE public.reviews ADD COLUMN updated_at TIMESTAMPTZ DEFAULT now();
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
 
 -- RPC to compute average rating for a user
 CREATE OR REPLACE FUNCTION public.get_average_rating(target_user_id UUID)
@@ -20,7 +20,7 @@ END;
 $$;
 
 -- Trigger: prevent rating changes and enforce 24h edit window
-CREATE FUNCTION public.check_review_update()
+CREATE OR REPLACE FUNCTION public.check_review_update()
 RETURNS TRIGGER
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
 AS $$
@@ -36,13 +36,14 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS check_review_update ON public.reviews;
 CREATE TRIGGER check_review_update
   BEFORE UPDATE ON public.reviews
   FOR EACH ROW
   EXECUTE FUNCTION public.check_review_update();
 
 -- Trigger: rate-limit reviews (max 1 per minute per user)
-CREATE FUNCTION public.check_review_spam()
+CREATE OR REPLACE FUNCTION public.check_review_spam()
 RETURNS TRIGGER
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
 AS $$
@@ -61,6 +62,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS check_review_spam ON public.reviews;
 CREATE TRIGGER check_review_spam
   BEFORE INSERT ON public.reviews
   FOR EACH ROW

@@ -1,0 +1,4 @@
+$env:SUPABASE_URL='https://mrbgadtpvlcgujbsllcw.supabase.co'
+$env:SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yYmdhZHRwdmxjZ3VqYnNsbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MjA4MjcsImV4cCI6MjA5ODM5NjgyN30.KG_bzJf6vjxmnRbEVuE_Xz1ABvbOZMMntOEkqKf2sJE'
+$env:PORT=3001
+npx tsx watch src/index.ts

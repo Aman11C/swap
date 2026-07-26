@@ -6,8 +6,8 @@
 -- 1. ALTER EXISTING MESSAGES TABLE
 -- ############################################################################
 ALTER TABLE public.messages
-  ADD COLUMN is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-  ADD COLUMN updated_at TIMESTAMPTZ;
+  ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ;
 
 -- Auto-set updated_at on message edit (soft-delete counts as update).
 CREATE OR REPLACE FUNCTION public.set_updated_at()
@@ -18,6 +18,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS messages_set_updated_at ON public.messages;
 CREATE TRIGGER messages_set_updated_at
   BEFORE UPDATE ON public.messages
   FOR EACH ROW
@@ -122,6 +123,7 @@ CREATE POLICY "Presence is readable by all authenticated users"
   USING (auth.role() = 'authenticated');
 
 -- Auto-update updated_at on presence changes.
+DROP TRIGGER IF EXISTS user_presence_set_updated_at ON public.user_presence;
 CREATE TRIGGER user_presence_set_updated_at
   BEFORE UPDATE ON public.user_presence
   FOR EACH ROW
